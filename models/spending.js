@@ -18,14 +18,10 @@ module.exports = (sequelize, DataTypes) => {
       usd_cash: DataTypes.DECIMAL,
       uzs_cash: DataTypes.DECIMAL,
       card: DataTypes.DECIMAL,
-      account: {
-        type: DataTypes.INTEGER,
-        references: {
-          model: "Users",
-          key: "id",
-        },
-      },
+      account: DataTypes.DECIMAL,
       comment: DataTypes.STRING,
+      staff_id: DataTypes.INTEGER,
+      adminId: DataTypes.INTEGER,
       date: DataTypes.DATE,
     },
     {

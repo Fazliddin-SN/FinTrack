@@ -27,6 +27,16 @@ module.exports = {
       card: Sequelize.DECIMAL,
       account: Sequelize.DECIMAL,
       comment: Sequelize.STRING,
+      staff_id: Sequelize.INTEGER,
+      admin_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: "Users", // Foreign key to SpendingCategories
+          key: "id",
+        },
+      },
+      part_num: Sequelize.STRING,
       date: {
         type: Sequelize.DATE,
         allowNull: false,

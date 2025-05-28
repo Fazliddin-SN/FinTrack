@@ -1,5 +1,5 @@
 "use strict";
-const { Model } = require("sequelize");
+const { Model, INTEGER } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
   class Income extends Model {
     /**
@@ -19,13 +19,10 @@ module.exports = (sequelize, DataTypes) => {
       usd_cash: DataTypes.DECIMAL,
       uzs_cash: DataTypes.DECIMAL,
       card: DataTypes.DECIMAL,
-      account: {
-        type: DataTypes.INTEGER,
-        references: {
-          model: "Users",
-          key: "id",
-        },
-      },
+      account: DataTypes.DECIMAL,
+      adminId: DataTypes.INTEGER,
+      staff_id: DataTypes.INTEGER,
+      part_num: DataTypes.STRING,
       comment: DataTypes.STRING,
       date: DataTypes.DATE,
     },

@@ -1,10 +1,22 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const incomeController = require('../controllers/incomeController');
+const incomeController = require("../controllers/incomeController");
+const verifyToken = require("../middlewares/verifyToken");
+const requireRole = require("../middlewares/requireRole");
 
-router.post('/', incomeController.createIncome);
-router.get('/', incomeController.getIncomes);
-router.put('/:id', incomeController.updateIncome);
-router.delete('/:id', incomeController.deleteIncome);
+router.post("/", verifyToken, requireRole(1, 3), incomeController.createIncome);
+router.get("/", verifyToken, requireRole(1, 3), incomeController.getIncomes);
+router.put(
+  "/:id",
+  verifyToken,
+  requireRole(1, 3),
+  incomeController.updateIncome
+);
+router.delete(
+  "/:id",
+  verifyToken,
+  requireRole(1, 3),
+  incomeController.deleteIncome
+);
 
 module.exports = router;

@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Users', {
+    await queryInterface.createTable("Users", {
       id: {
         type: Sequelize.INTEGER,
         autoIncrement: true,
@@ -16,27 +16,30 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
+      chatId: {
+        type: Sequelize.BIGINT,
+      },
       role_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'Roles',
-          key: 'id',
+          model: "Roles",
+          key: "id",
         },
       },
       createdAt: {
         type: Sequelize.DATE,
         allowNull: false,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
       },
       updatedAt: {
         type: Sequelize.DATE,
         allowNull: false,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
       },
     });
   },
   down: async (queryInterface) => {
-    await queryInterface.dropTable('Users');
+    await queryInterface.dropTable("Users");
   },
 };

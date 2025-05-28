@@ -15,7 +15,7 @@ router.post(
 router.get(
   "/all",
   verifyToken,
-  requireRole(1),
+  requireRole(1, 3),
   IncomeCategoryController.getAllCategories
 );
 

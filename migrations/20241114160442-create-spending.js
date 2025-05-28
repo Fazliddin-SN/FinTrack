@@ -1,7 +1,7 @@
-'use strict';
+"use strict";
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    await queryInterface.createTable('Spendings', {
+    await queryInterface.createTable("Spendings", {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -16,17 +16,26 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
         references: {
-          model: 'SpendingCategories', // Foreign key to SpendingCategories
-          key: 'id',
+          model: "SpendingCategories", // Foreign key to SpendingCategories
+          key: "id",
         },
-        onUpdate: 'CASCADE',
-        onDelete: 'SET NULL',
+        onUpdate: "CASCADE",
+        onDelete: "SET NULL",
       },
       usd_cash: Sequelize.DECIMAL,
       uzs_cash: Sequelize.DECIMAL,
       card: Sequelize.DECIMAL,
       account: Sequelize.DECIMAL,
       comment: Sequelize.STRING,
+      staff_id: Sequelize.INTEGER,
+      admin_id: {
+        type: Sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: "Users", // Foreign key to SpendingCategories
+          key: "id",
+        },
+      },
       date: {
         type: Sequelize.DATE,
         allowNull: false,
@@ -34,17 +43,17 @@ module.exports = {
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
       },
       updatedAt: {
         allowNull: false,
         type: Sequelize.DATE,
-        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+        defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
       },
     });
   },
 
   down: async (queryInterface) => {
-    await queryInterface.dropTable('Spendings');
+    await queryInterface.dropTable("Spendings");
   },
 };
