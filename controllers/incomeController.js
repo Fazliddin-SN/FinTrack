@@ -15,9 +15,25 @@ exports.createIncome = async (req, res) => {
 exports.getIncomes = async (req, res) => {
   const page = req.query.page || 0;
   const size = req.query.size || 30;
-  const { category_id, comment, staff_id, startDate, endDate } = req.query;
+  const {
+    category_id,
+    comment,
+    staff_id,
+    startDate,
+    endDate,
+    sort = "id",
+    order,
+  } = req.query;
   // console.log("end date ", startDate, endDate);
   try {
+    // sorting type and order
+    const validFields = ["uzs_cash", "usd_cash", "card", "account"];
+    const field = validFields.includes(sort) ? sort : "id";
+    console.log("sort ", field);
+
+    const orderType = order === "asc" ? "ASC" : "DESC";
+    console.log("order type ", orderType);
+
     // Build the where clause based on query parameters
     const whereClause = {};
 
@@ -57,7 +73,7 @@ exports.getIncomes = async (req, res) => {
 
     const { count, rows } = await Income.findAndCountAll({
       where: whereClause,
-      order: [["id", "DESC"]],
+      order: [[field, orderType]],
       offset: page * size,
       limit: size,
       include: [{ model: IncomeCategory, as: "category" }],
@@ -77,9 +93,7 @@ exports.getIncomes = async (req, res) => {
 
 // Update an income record
 exports.updateIncome = async (req, res) => {
-  console.log("id ", req.params.id);
-
-  console.log(req.body);
+  // console.log(req.body);
 
   try {
     const { id } = req.params;

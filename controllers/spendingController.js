@@ -17,8 +17,20 @@ exports.createSpending = async (req, res) => {
 exports.getSpendings = async (req, res) => {
   const page = req.query.page || 0;
   const size = req.query.size || 30;
-  const { category_id, comment, staff_id, startDate, endDate } = req.query;
+  const {
+    category_id,
+    comment,
+    staff_id,
+    startDate,
+    endDate,
+    sort = "id",
+    order,
+  } = req.query;
   try {
+    // sorting type and order
+    const validFields = ["uzs_cash", "usd_cash", "card", "account"];
+    const field = validFields.includes(sort) ? sort : "id";
+    const orderType = order === "asc" ? "ASC" : "DESC";
     // Build the where clause based on query parameters
     const whereClause = {};
 
@@ -51,7 +63,7 @@ exports.getSpendings = async (req, res) => {
     }
     const { count, rows } = await Spending.findAndCountAll({
       where: whereClause,
-      order: [["id", "DESC"]],
+      order: [[field, orderType]],
       offset: page * size,
       limit: size,
       include: [{ model: SpendingCategory, as: "category" }],
@@ -101,8 +113,13 @@ exports.mySpendings = async (req, res) => {
   const userId = req.user.id;
   const page = req.query.page || 0;
   const size = req.query.size || 30;
-  const { comment, startDate, endDate } = req.query;
+  const { comment, startDate, endDate, sort = "id", order } = req.query;
   try {
+    // sorting type and order
+    const validFields = ["uzs_cash", "usd_cash", "card"];
+    const field = validFields.includes(sort) ? sort : "id";
+    const orderType = order === "asc" ? "ASC" : "DESC";
+
     // Build the where clause based on query parameters
     const whereClause = {};
 
@@ -130,7 +147,7 @@ exports.mySpendings = async (req, res) => {
     }
     const { count, rows } = await Spending.findAndCountAll({
       where: whereClause,
-      order: [["id", "DESC"]],
+      order: [[field, orderType]],
       offset: page * size,
       limit: size,
       include: [{ model: SpendingCategory, as: "category" }],
