@@ -2,7 +2,7 @@ const { Spending, SpendingCategory } = require("../models");
 const { Op } = require("sequelize");
 // Create a new spending record
 exports.createSpending = async (req, res) => {
-  console.log("req body ", req.body);
+  // console.log("req body ", req.body);
 
   try {
     const spending = await Spending.create({ ...req.body });

@@ -16,15 +16,30 @@ module.exports = (sequelize, DataTypes) => {
       amount: DataTypes.DECIMAL,
       category_id: DataTypes.INTEGER,
       userId: DataTypes.INTEGER,
-      usd_cash: DataTypes.DECIMAL,
-      uzs_cash: DataTypes.DECIMAL,
-      card: DataTypes.DECIMAL,
-      account: DataTypes.DECIMAL,
-      adminId: DataTypes.INTEGER,
+      usd_cash: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+      },
+      uzs_cash: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+      },
+      card: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+      },
+      account: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0,
+      },
       staff_id: DataTypes.INTEGER,
       part_num: DataTypes.STRING,
+      adminId: DataTypes.INTEGER,
       comment: DataTypes.STRING,
-      date: DataTypes.DATE,
+      date: {
+        type: DataTypes.DATE,
+        defaultValue: DataTypes.NOW,
+      },
     },
     {
       sequelize,
