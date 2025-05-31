@@ -26,11 +26,14 @@ exports.getSpendings = async (req, res) => {
     sort = "id",
     order,
   } = req.query;
+  console.log("spendings ", req.query);
+
   try {
     // sorting type and order
     const validFields = ["uzs_cash", "usd_cash", "card", "account"];
     const field = validFields.includes(sort) ? sort : "id";
     const orderType = order === "asc" ? "ASC" : "DESC";
+
     // Build the where clause based on query parameters
     const whereClause = {};
 
@@ -48,19 +51,26 @@ exports.getSpendings = async (req, res) => {
 
     //if staff_id is provided, add it to where claue
     if (staff_id) {
-      whereClause.adminId = staff_id;
+      whereClause.admin_id = staff_id;
     }
 
+    const isValidDate = (d) => d && !isNaN(new Date(d).getTime());
+
     //add date filter
-    if (startDate && endDate) {
+    if (isValidDate(startDate) && isValidDate(endDate)) {
       whereClause.date = {
         [Op.between]: [new Date(startDate), new Date(endDate)],
       };
-    } else if (startDate) {
-      whereClause.date = { [Op.gte]: new Date(startDate) };
-    } else if (endDate) {
-      whereClause.date = { [Op.gte]: new Date(endDate) };
+    } else if (isValidDate(startDate)) {
+      whereClause.date = {
+        [Op.gte]: new Date(startDate),
+      };
+    } else if (isValidDate(endDate)) {
+      whereClause.date = {
+        [Op.lte]: new Date(endDate),
+      };
     }
+
     const { count, rows } = await Spending.findAndCountAll({
       where: whereClause,
       order: [[field, orderType]],
@@ -135,16 +145,22 @@ exports.mySpendings = async (req, res) => {
       };
     }
 
+    const isValidDate = (d) => d && !isNaN(new Date(d).getTime());
     //add date filter
-    if (startDate && endDate) {
+    if (isValidDate(startDate) && isValidDate(endDate)) {
       whereClause.date = {
         [Op.between]: [new Date(startDate), new Date(endDate)],
       };
-    } else if (startDate) {
-      whereClause.date = { [Op.gte]: new Date(startDate) };
-    } else if (endDate) {
-      whereClause.date = { [Op.gte]: new Date(endDate) };
+    } else if (isValidDate(startDate)) {
+      whereClause.date = {
+        [Op.gte]: new Date(startDate),
+      };
+    } else if (isValidDate(endDate)) {
+      whereClause.date = {
+        [Op.lte]: new Date(endDate),
+      };
     }
+
     const { count, rows } = await Spending.findAndCountAll({
       where: whereClause,
       order: [[field, orderType]],

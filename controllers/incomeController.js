@@ -29,10 +29,7 @@ exports.getIncomes = async (req, res) => {
     // sorting type and order
     const validFields = ["uzs_cash", "usd_cash", "card", "account"];
     const field = validFields.includes(sort) ? sort : "id";
-    console.log("sort ", field);
-
     const orderType = order === "asc" ? "ASC" : "DESC";
-    console.log("order type ", orderType);
 
     // Build the where clause based on query parameters
     const whereClause = {};
@@ -51,24 +48,22 @@ exports.getIncomes = async (req, res) => {
 
     //if staff_id is provided, add it to where claue
     if (staff_id) {
-      whereClause.adminId = staff_id;
+      whereClause.admin_id = staff_id;
     }
-
-    // add date filter
-    if (startDate && endDate) {
-      const start = new Date(startDate);
-      const end = new Date(endDate);
-
-      // Ensure correct order
-      const [from, to] = start <= end ? [start, end] : [end, start];
-
+    const isValidDate = (d) => d && !isNaN(new Date(d).getTime());
+    //add date filter
+    if (isValidDate(startDate) && isValidDate(endDate)) {
       whereClause.date = {
-        [Op.between]: [from, to],
+        [Op.between]: [new Date(startDate), new Date(endDate)],
       };
-    } else if (startDate) {
-      whereClause.date = { [Op.gte]: new Date(startDate) };
-    } else if (endDate) {
-      whereClause.date = { [Op.lte]: new Date(endDate) };
+    } else if (isValidDate(startDate)) {
+      whereClause.date = {
+        [Op.gte]: new Date(startDate),
+      };
+    } else if (isValidDate(endDate)) {
+      whereClause.date = {
+        [Op.lte]: new Date(endDate),
+      };
     }
 
     const { count, rows } = await Income.findAndCountAll({

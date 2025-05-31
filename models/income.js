@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
   Income.init(
     {
       amount: DataTypes.DECIMAL,
-      category_id: DataTypes.INTEGER,
+      category_id: { type: DataTypes.INTEGER, defaultValue: 1 },
       userId: DataTypes.INTEGER,
       usd_cash: {
         type: DataTypes.INTEGER,
@@ -34,7 +34,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       staff_id: DataTypes.INTEGER,
       part_num: DataTypes.STRING,
-      adminId: DataTypes.INTEGER,
+      admin_id: DataTypes.INTEGER,
       comment: DataTypes.STRING,
       date: {
         type: DataTypes.DATE,

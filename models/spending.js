@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
   Spending.init(
     {
       amount: DataTypes.DECIMAL,
-      category_id: DataTypes.INTEGER,
+      category_id: { type: DataTypes.INTEGER, defaultValue: 1 },
       usd_cash: {
         type: DataTypes.INTEGER,
         defaultValue: 0,
@@ -33,7 +33,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       comment: DataTypes.STRING,
       staff_id: DataTypes.INTEGER,
-      adminId: DataTypes.INTEGER,
+      admin_id: DataTypes.INTEGER,
       date: {
         type: DataTypes.DATE,
         defaultValue: DataTypes.NOW,
