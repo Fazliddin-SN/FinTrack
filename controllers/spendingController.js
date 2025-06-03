@@ -1,11 +1,35 @@
-const { Spending, SpendingCategory } = require("../models");
+const { Spending, SpendingCategory, User } = require("../models");
 const { Op } = require("sequelize");
+const { bot } = require("../config/botRecourse");
 // Create a new spending record
 exports.createSpending = async (req, res) => {
   // console.log("req body ", req.body);
-
+  const body = req.body;
   try {
+    const user = await User.findOne({
+      where: { id: body.staff_id },
+    });
+
     const spending = await Spending.create({ ...req.body });
+
+    const fieldsToCheck = ["usd_cash", "card", "account", "uzs_cash"];
+    let enteredAmount;
+
+    for (let field of fieldsToCheck) {
+      const value = spending[field];
+
+      if (value && value !== "0" && parseFloat(value) !== 0) {
+        enteredAmount = value;
+      }
+    }
+    if (user.chatId) {
+      bot.api.sendMessage(
+        user.chatId,
+        `💰 Hurmat bilan,\nSiz *${enteredAmount}* so'm yoki dollar miqdorida mablag‘ oldingiz.\n\nIltimos, ushbu ma’lumotni nazorat qiling.`,
+        { parse_mode: "Markdown" }
+      );
+    }
+
     res.status(201).json(spending);
   } catch (error) {
     console.error("Error creating spending:", error);

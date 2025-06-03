@@ -10,6 +10,9 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
+    chatId: {
+      type: DataTypes.BIGINT,
+    },
     role_id: {
       type: DataTypes.INTEGER,
       allowNull: false,

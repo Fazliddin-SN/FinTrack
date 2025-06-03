@@ -10,6 +10,11 @@ module.exports = {
         createdAt: new Date(),
         updatedAt: new Date(),
       },
+      {
+        role_name: "Auditor",
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
     ]);
   },
   down: async (queryInterface) => {

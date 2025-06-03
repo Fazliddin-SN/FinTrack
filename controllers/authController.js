@@ -84,8 +84,6 @@ exports.userslist = async (req, res) => {
 };
 
 exports.updateUser = async (req, res) => {
-  console.log("req body ", req.body);
-
   const { username, password, role_id } = req.body;
   const { id } = req.params;
   try {

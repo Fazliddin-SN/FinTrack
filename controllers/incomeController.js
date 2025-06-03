@@ -52,6 +52,7 @@ exports.getIncomes = async (req, res) => {
     }
     const isValidDate = (d) => d && !isNaN(new Date(d).getTime());
     //add date filter
+
     if (isValidDate(startDate) && isValidDate(endDate)) {
       whereClause.date = {
         [Op.between]: [new Date(startDate), new Date(endDate)],

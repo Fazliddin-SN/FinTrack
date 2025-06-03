@@ -42,6 +42,7 @@ module.exports = {
       admin_id: {
         type: Sequelize.INTEGER,
       },
+      checked: { type: Sequelize.INTEGER },
       date: {
         type: Sequelize.DATE,
       },
