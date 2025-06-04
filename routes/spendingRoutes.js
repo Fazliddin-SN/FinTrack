@@ -21,7 +21,7 @@ router.get(
 router.get(
   "/my-spending",
   verifyToken,
-  requireRole(3, 1, 2),
+  requireRole(3, 1, 2, 5),
   spendingController.mySpendings
 );
 

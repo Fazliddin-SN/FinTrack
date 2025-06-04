@@ -5,7 +5,7 @@ const verifyToken = require("../middlewares/verifyToken");
 const requireRole = require("../middlewares/requireRole");
 
 router.post("/", verifyToken, requireRole(1, 3), incomeController.createIncome);
-router.get("/", verifyToken, requireRole(1, 3), incomeController.getIncomes);
+router.get("/", verifyToken, requireRole(1, 3, 5), incomeController.getIncomes);
 router.put(
   "/:id",
   verifyToken,
@@ -17,6 +17,14 @@ router.delete(
   verifyToken,
   requireRole(1, 3),
   incomeController.deleteIncome
+);
+
+//CHANGING CHECKED STATUS
+router.post(
+  "/status/:id",
+  verifyToken,
+  requireRole(5),
+  incomeController.changeIncomeCheck
 );
 
 module.exports = router;

@@ -22,4 +22,8 @@ router.use("/inCategory", incomeCategories);
 const spendingCategories = require("./spendingCategories.routes");
 router.use("/spdCategory", spendingCategories);
 
+// balances routes
+const balancesRoutes = require("./balances.routes");
+router.use("/balance", balancesRoutes);
+
 module.exports = router;

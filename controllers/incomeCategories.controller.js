@@ -1,5 +1,4 @@
 const { IncomeCategory } = require("../models");
-const incomecategory = require("../models/incomecategory");
 
 const IncomeCategoryController = {
   async addInCategory(req, res) {

@@ -1,6 +1,7 @@
 const { Spending, SpendingCategory, User } = require("../models");
 const { Op } = require("sequelize");
 const { bot } = require("../config/botRecourse");
+const { updateCurrentBalance } = require("../utils/helper");
 // Create a new spending record
 exports.createSpending = async (req, res) => {
   // console.log("req body ", req.body);
@@ -12,12 +13,14 @@ exports.createSpending = async (req, res) => {
 
     const spending = await Spending.create({ ...req.body });
 
+    // UPDATES CURRENT BALANCE
+    updateCurrentBalance(spending, false);
+
+    // SEND MESSAGES TO EMPLOYEES
     const fieldsToCheck = ["usd_cash", "card", "account", "uzs_cash"];
     let enteredAmount;
-
     for (let field of fieldsToCheck) {
       const value = spending[field];
-
       if (value && value !== "0" && parseFloat(value) !== 0) {
         enteredAmount = value;
       }

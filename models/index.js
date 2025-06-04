@@ -64,6 +64,13 @@ db.Spending.belongsTo(db.SpendingCategory, {
 });
 db.SpendingCategory.hasMany(db.Spending, { foreignKey: "category_id" });
 
+// Define associations here
+db.Income.belongsTo(db.IncomeCheck, {
+  foreignKey: "checked",
+  as: "checkedStatus",
+});
+db.IncomeCheck.hasMany(db.Income, { foreignKey: "checked" });
+
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 

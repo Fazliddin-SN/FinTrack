@@ -1,9 +1,15 @@
-const { Income, IncomeCategory } = require("../models");
+const { Income, IncomeCategory, IncomeCheck } = require("../models");
 const { Op } = require("sequelize");
+const { updateCurrentBalance } = require("../utils/helper");
+
 // Create a new income record
 exports.createIncome = async (req, res) => {
   try {
     const income = await Income.create(req.body);
+
+    //UPDATE THE CURRENT BALANCE
+    updateCurrentBalance(income, true);
+
     res.status(201).json(income);
   } catch (error) {
     console.error("Error creating income:", error);
@@ -72,7 +78,10 @@ exports.getIncomes = async (req, res) => {
       order: [[field, orderType]],
       offset: page * size,
       limit: size,
-      include: [{ model: IncomeCategory, as: "category" }],
+      include: [
+        { model: IncomeCategory, as: "category" },
+        { model: IncomeCheck, as: "checkedStatus" },
+      ],
     });
     res.json({
       incomes: rows,
@@ -110,5 +119,47 @@ exports.deleteIncome = async (req, res) => {
   } catch (error) {
     console.error("Error deleting income:", error);
     res.status(500).json({ error: "Failed to delete income record" });
+  }
+};
+
+// UPDATE INCOME CHECK STATUS
+
+exports.changeIncomeCheck = async (req, res, next) => {
+  const { checkedStatus } = req.query;
+  console.log("query ", checkedStatus);
+
+  const { id } = req.params;
+  try {
+    // find the income
+    const income = await Income.findOne({
+      where: { id },
+    });
+
+    if (!income) {
+      return res.status(400).json({
+        error: "Bu id bilan kirim topilmadi.",
+      });
+    }
+
+    const [count, rows] = await Income.update(
+      { checked: +checkedStatus },
+      { where: { id }, returning: true }
+    );
+
+    if (rows === 0) {
+      return res.status(400).json({
+        error: "Checked status o'zgarmadi!",
+      });
+    }
+
+    res.status(200).json({
+      message: "Income checked status updated!",
+      updatedIncome: rows,
+    });
+  } catch (error) {
+    console.error("Failed to update income ", error);
+    return res.status(400).json({
+      error: " Failed to update income ",
+    });
   }
 };

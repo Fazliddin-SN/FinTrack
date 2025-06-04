@@ -6,6 +6,8 @@ const connectDB = require("../config/database");
 const verifyToken = require("../middlewares/verifyToken");
 const requireRole = require("../middlewares/requireRole");
 const indexRouter = require("../routes/index");
+//scheduler
+require("../utils/scheduler");
 
 const app = express();
 
