@@ -1,7 +1,11 @@
 const { Spending, SpendingCategory, User } = require("../models");
 const { Op } = require("sequelize");
 const { bot } = require("../config/botRecourse");
-const { updateCurrentBalance } = require("../utils/helper");
+const {
+  updateCurrentBalance,
+  updateCurrentBalanceOnEdit,
+  updateCurrentBalanceOnDelete,
+} = require("../utils/helper");
 // Create a new spending record
 exports.createSpending = async (req, res) => {
   // console.log("req body ", req.body);
@@ -18,17 +22,33 @@ exports.createSpending = async (req, res) => {
 
     // SEND MESSAGES TO EMPLOYEES
     const fieldsToCheck = ["usd_cash", "card", "account", "uzs_cash"];
-    let enteredAmount;
+    let enteredAmounts = [];
+
     for (let field of fieldsToCheck) {
       const value = spending[field];
-      if (value && value !== "0" && parseFloat(value) !== 0) {
-        enteredAmount = value;
+      if (value && parseFloat(value) !== 0) {
+        const label =
+          field === "usd_cash"
+            ? "💵 USD"
+            : field === "uzs_cash"
+            ? "🇺🇿 So'm"
+            : field === "card"
+            ? "💳 Karta"
+            : field === "account"
+            ? "🏢 Hisob"
+            : "❓";
+        enteredAmounts.push(`${label}: ${parseFloat(value)}`);
       }
     }
+
     if (user.chatId) {
       bot.api.sendMessage(
         user.chatId,
-        `💰 Hurmat bilan,\nSiz *${enteredAmount}* so'm yoki dollar miqdorida mablag‘ oldingiz.\n\nIltimos, ushbu ma’lumotni nazorat qiling.`,
+        `💸 *Yangi harajat qilindi!*\n\n` +
+          `📅 Sana: *${new Date().toLocaleDateString("uz-UZ")}*\n\n` +
+          `${enteredAmounts.join("\n")}\n\n` +
+          `✅ Iltimos, bu harajatni nazorat qilishni unutmang.\n\n` +
+          `_Hurmat bilan, sizning moliyaviy yordamchingiz 🧾_`,
         { parse_mode: "Markdown" }
       );
     }
@@ -123,9 +143,23 @@ exports.getSpendings = async (req, res) => {
 
 // Update a spending record
 exports.updateSpending = async (req, res) => {
+  const { id } = req.params;
   try {
-    const { id } = req.params;
+    const oldExpense = await Spending.findOne({
+      where: { id },
+    });
+    if (!oldExpense) {
+      return res.status(404).json({ error: "Expense not found" });
+    }
     const updated = await Spending.update(req.body, { where: { id } });
+
+    //  Fetch the updated expense
+    const newExpense = await Spending.findOne({
+      where: { id },
+    });
+
+    await updateCurrentBalanceOnEdit(oldExpense, newExpense, false);
+
     res.json(updated);
   } catch (error) {
     console.error("Error updating spending:", error);
@@ -137,7 +171,15 @@ exports.updateSpending = async (req, res) => {
 exports.deleteSpending = async (req, res) => {
   try {
     const { id } = req.params;
+
+    const expense = await Spending.findOne({
+      where: { id },
+    });
+
+    await updateCurrentBalanceOnDelete(expense, false);
+
     await Spending.destroy({ where: { id } });
+
     res.json({ message: "Spending record deleted successfully" });
   } catch (error) {
     console.error("Error deleting spending:", error);

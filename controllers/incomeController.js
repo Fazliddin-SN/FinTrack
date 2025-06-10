@@ -1,6 +1,10 @@
 const { Income, IncomeCategory, IncomeCheck } = require("../models");
 const { Op } = require("sequelize");
-const { updateCurrentBalance } = require("../utils/helper");
+const {
+  updateCurrentBalance,
+  updateCurrentBalanceOnEdit,
+  updateCurrentBalanceOnDelete,
+} = require("../utils/helper");
 
 // Create a new income record
 exports.createIncome = async (req, res) => {
@@ -102,7 +106,23 @@ exports.updateIncome = async (req, res) => {
 
   try {
     const { id } = req.params;
+
+    const oldIncome = await Income.findOne({
+      where: { id },
+    });
+
+    if (!oldIncome) {
+      return res.status(404).json({ error: "Income not found" });
+    }
+
     const updated = await Income.update(req.body, { where: { id } });
+
+    const newIncome = await Income.findOne({
+      where: { id },
+    });
+
+    await updateCurrentBalanceOnEdit(oldIncome, newIncome, true);
+
     res.json(updated);
   } catch (error) {
     console.error("Error updating income:", error);
@@ -114,7 +134,15 @@ exports.updateIncome = async (req, res) => {
 exports.deleteIncome = async (req, res) => {
   try {
     const { id } = req.params;
+
+    const income = await Income.findOne({
+      where: { id },
+    });
+
+    updateCurrentBalanceOnDelete(income, true);
+
     await Income.destroy({ where: { id } });
+
     res.json({ message: "Income record deleted successfully" });
   } catch (error) {
     console.error("Error deleting income:", error);
